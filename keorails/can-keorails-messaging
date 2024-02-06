@@ -1,0 +1,200 @@
+asyncapi: 3.0.0
+info:
+  title: Keo Rails Messaging 
+  version: 1.0.0
+  description: This service process Keo Rails (AB) on-chain events
+components:
+  messages:
+    account.updateBuyerWalletStatus:
+      name: buyerWalletStatusUpdated
+      title: Buyer Wallet Status Updated 
+      summary: >-
+        Inform about buyer account change of wallet status.
+      payload:
+        $ref: '#/components/schemas/accountUpdatedPayload' 
+    account.updateSupplerWalletStatus:
+      name: supplierWalletStatusUpdated
+      title: Supplier Wallet Status Updated 
+      summary: >-
+        Inform about supplier account change of wallet status.
+      payload:
+        $ref: '#/components/schemas/accountUpdatedPayload'
+    invoice.updateStatus:
+      name: invoiceStatusUpdated
+      title: Invoice Status Updated
+      payload:
+        $ref: '#/components/schemas/invoiceUpdatedPayload'
+    invoice.validateFraud:
+      name: invoiceValidateFraud
+      title: Invoice Validate Fraud
+      summary: >-
+        Command to validate fraud of an invoice.
+      payload:
+        $ref: '#/components/schemas/invoiceValidateFraudPayload'
+    loan.createCollection:
+      name: loanCollectionCreated
+      title: Loan Collection Created
+      summary: >-
+        Inform about a collection made for a loan.
+      payload:
+        $ref: '#/components/schemas/loanCollectionCreatedPayload'
+    loan.checkInvoices:
+      name: loanCheckInvoices
+      title: Loan Check Invoices
+      summary: >-
+        Command to check debts of a list of invoice loans.
+      payload:
+        $ref: '#/components/schemas/loanCheckPayload'
+    supplier.createAbl:
+      name: supplierCreateOnAbl
+      title: Supplier Create On ABL
+      summary: >-
+        Command the creation of supplier on ABL.
+      payload:
+        $ref: '#/components/schemas/supplierCreateAblPayload' 
+    collection.collectionCreated:
+      name: CollectionCreated
+      title: Collection Created 
+      summary: >-
+        Inform about the creation of a collection on Workeo.
+      payload:
+        $ref: '#/components/schemas/collectionCreatedPayload'
+    payment.processed:
+      name: PaymentProcessed
+      title: Payment Processed
+      summary: >-
+        Inform about a payment processed on Workeo.
+      payload:
+        $ref: '#/components/schemas/paymentProcessedPayload'
+  schemas:
+    accountUpdatedPayload:
+      type: object
+      properties:
+        id: 
+          type: string
+        type: 
+          type: string
+        walletStatus: 
+          type: string
+        walletAddress:
+          type: string
+    invoiceUpdatedPayload:
+      type: object
+      properties:
+        id: 
+          type: string
+        status:
+          type: string
+        lent:
+          type: number
+        paidAmount:
+          type: number
+    invoiceValidateFraudPayload:
+      type: object
+      properties:
+        invoiceId: 
+          type: string
+        buyerCID:
+          type: string
+        amount:
+          type: number
+    loanCollectionCreatedPayload:
+      type: object
+    loanCheckPayload:
+      type: object
+      properties:
+        invoiceId: 
+          type: string
+        amount: 
+          type: number
+        date: 
+          type: string
+        capital: 
+          type: number
+        interest: 
+          type: number
+        fees: 
+          type: number
+        isLocked: 
+          type: boolean
+        type: 
+          type: string
+    supplierCreateAblPayload:
+      type: object
+      properties:
+        providerId: 
+          type: number
+    collectionCreatedPayload:
+      type: object
+      properties:
+        id: 
+          type: number
+        status:
+          type: string
+        buyerAccountId:
+          type: string
+        createdAt:
+          type: string
+        paidAmount:
+          type: number
+        loanEventType:
+          type: string
+        principalDebt:
+          type: number
+        interestDebt: 
+          type: number
+        feesDebt: 
+          type: number
+        invoiceId:
+          type: string
+        date:
+          type: string
+    paymentProcessedPayload:
+      type: object
+      properties:
+        collectionId: 
+          type: number
+        dueDate:
+          type: string
+        type:
+          type: string
+        principal:
+          type: number
+        interest: 
+          type: number
+        fees: 
+          type: number
+        totalDebt:
+          type: number
+        invoiceId:
+          type: string
+        isLocked:
+          type: boolean
+  parameters:
+    coreProject:
+      default: gc-k-gbl-core-dev
+  channels:
+    kr_can_event_bus:
+      address: projects/{coreProject}/topics/kr_can_event_bus
+      messages:
+        account.updateSupplerWalletStatus:
+          $ref: '#/components/messages/account.updateSupplerWalletStatus'
+        account.updateBuyerWalletStatus:
+          $ref: '#/components/messages/account.updateBuyerWalletStatus'
+        invoice.updateStatus:
+          $ref: '#/components/messages/invoice.updateStatus'
+        supplier.createAbl:
+          $ref: '#/components/messages/supplier.createAbl'
+        loan.createCollection:
+          $ref: '#/components/messages/loan.createCollection'
+        invoice.validateFraud:
+          $ref: '#/components/messages/invoice.validateFraud'
+        loan.checkInvoices:
+          $ref: '#/components/messages/loan.checkInvoices'
+        collection.collectionCreated:
+          $ref: '#/components/messages/collection.collectionCreated'
+        payment.processed:
+          $ref: '#/components/messages/payment.processed'
+      parameters:
+        $ref: '#/components/parameters/coreProject'    
+    
