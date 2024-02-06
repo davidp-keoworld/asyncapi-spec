@@ -2,7 +2,9 @@ asyncapi: 3.0.0
 info:
   title: Keo Rails Messaging 
   version: 1.0.0
-  description: This service process Keo Rails (AB) on-chain events
+  description: |-
+    The messages involved in Keo Rails Canada, used as components in 
+    asyncapi specs of  system applications.
 components:
   messages:
     account.updateBuyerWalletStatus:
@@ -22,6 +24,8 @@ components:
     invoice.updateStatus:
       name: invoiceStatusUpdated
       title: Invoice Status Updated
+      summary: >-
+        Inform about invoice change of status on-chain
       payload:
         $ref: '#/components/schemas/invoiceUpdatedPayload'
     invoice.validateFraud:
@@ -35,7 +39,7 @@ components:
       name: loanCollectionCreated
       title: Loan Collection Created
       summary: >-
-        Inform about a collection made for a loan.
+        Inform about a collection made for a loan on-chain.
       payload:
         $ref: '#/components/schemas/loanCollectionCreatedPayload'
     loan.checkInvoices:
@@ -172,7 +176,12 @@ components:
           type: boolean
   parameters:
     coreProject:
-      default: gc-k-gbl-core-dev
+      enum:
+        - gc-k-gbl-core-dev
+        - gc-k-gbl-core-qa
+        - gc-k-gbl-core-pro
+      description:
+        GCP Core Project
   channels:
     kr_can_event_bus:
       address: projects/{coreProject}/topics/kr_can_event_bus
@@ -183,12 +192,12 @@ components:
           $ref: '#/components/messages/account.updateBuyerWalletStatus'
         invoice.updateStatus:
           $ref: '#/components/messages/invoice.updateStatus'
+        invoice.validateFraud:
+          $ref: '#/components/messages/invoice.validateFraud'
         supplier.createAbl:
           $ref: '#/components/messages/supplier.createAbl'
         loan.createCollection:
           $ref: '#/components/messages/loan.createCollection'
-        invoice.validateFraud:
-          $ref: '#/components/messages/invoice.validateFraud'
         loan.checkInvoices:
           $ref: '#/components/messages/loan.checkInvoices'
         collection.collectionCreated:
@@ -197,4 +206,3 @@ components:
           $ref: '#/components/messages/payment.processed'
       parameters:
         $ref: '#/components/parameters/coreProject'    
-    
